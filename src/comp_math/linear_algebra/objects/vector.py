@@ -13,6 +13,27 @@ class Vector:
 
     def __setitem__(self, index, value):
         self._data[index] = value
+
+    def __mul__(self, other):
+        """Умножение: vector * number или наоборот"""
+        if isinstance(other, (int, float)):
+            return self.multiply(other)
+        else:
+            return NotImplemented
+    
+    def __rmul__(self, other):
+        """Умножение: number * vector в обратном порядке"""
+        if isinstance(other, (int, float)):
+            return self.multiply(other)
+        else:
+            return NotImplemented
+        
+    def __truediv__(self, scalar):
+        """Деление на скаляр: vector / number"""
+        if isinstance(scalar, (int, float)):
+            return self.multiply(1.0 / scalar)
+        else:
+            return NotImplemented
     
     def add(self, other: 'Vector') -> 'Vector':
         """Сложение векторов"""
