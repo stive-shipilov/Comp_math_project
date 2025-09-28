@@ -3,7 +3,7 @@ from typing import Union, List
 from .vector import Vector
 
 class Matrix:
-    """Класс матрицы с операциями через индексацию"""
+    """Класс матрицы с операциями"""
     def __init__(self, data: Union[List[List], np.ndarray]):
         self._data = np.array(data, dtype=float)
         self.shape = self._data.shape
@@ -102,6 +102,54 @@ class Matrix:
                 sum_val += self[i, j] * vector[j]
             result[i] = sum_val
         return result
+    
+    def inverse(self) -> 'Matrix':
+        """Обращение матрицы методом Гаусса-Жордана"""
+        A = self
+        n = A.shape[0]
+        
+        # Инициализирунем расширенную матрицу
+        augmented = np.zeros((n, 2*n))
+        for i in range(n):
+            for j in range(n):
+                augmented[i, j] = A[i, j]
+            augmented[i, n + i] = 1
+        
+        # Прямой ход
+        for i in range(n):
+            # Выбор главного элемента
+            pivot_row = i
+            for k in range(i + 1, n):
+                if abs(augmented[k, i]) > abs(augmented[pivot_row, i]):
+                    pivot_row = k
+            
+            # Перестановка строк
+            if pivot_row != i:
+                for j in range(2*n):
+                    augmented[i, j], augmented[pivot_row, j] = augmented[pivot_row, j], augmented[i, j]
+            
+            # Нормировка текущей строки
+            pivot = augmented[i, i]
+            if pivot == 0:
+                raise ValueError("Матрица вырождена")
+            
+            for j in range(2*n):
+                augmented[i, j] /= pivot
+            
+            # Обнуление столбца
+            for k in range(n):
+                if k != i:
+                    factor = augmented[k, i]
+                    for j in range(2*n):
+                        augmented[k, j] -= factor * augmented[i, j]
+        
+        # Извлекаем обратную матрицу
+        A_inv = Matrix(np.zeros((n, n)))
+        for i in range(n):
+            for j in range(n):
+                A_inv[i, j] = augmented[i, n + j]
+        
+        return A_inv
         
     def transpose(self) -> 'Matrix':
         """Транспонирование матрицы"""
