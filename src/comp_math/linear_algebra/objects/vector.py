@@ -72,18 +72,14 @@ class Vector:
             result[i] = self[i] * scalar
         return result
         
-    def norm(self, p: int = 2) -> float:
+    def norm(self, type: str = "decart") -> float:
         """Норма вектора"""
-        if p == 2:  # Евклидова норма
-            sum_sq = 0.0
-            for i in range(self.dim):
-                sum_sq += self[i] ** 2
-            return np.sqrt(sum_sq)
-        else:  # Lp норма
-            sum_p = 0.0
-            for i in range(self.dim):
-                sum_p += abs(self[i]) ** p
-            return sum_p ** (1/p)
+        match type:
+            case "decart":
+                sum_square = 0.0
+                for i in range(self.dim):
+                    sum_square += self[i] ** 2
+                return sum_square**(0.5)
         
     def to_numpy(self) -> np.ndarray:
         """Конвертация в numpy array"""

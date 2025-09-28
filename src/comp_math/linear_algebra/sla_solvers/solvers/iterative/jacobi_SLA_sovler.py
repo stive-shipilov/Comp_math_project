@@ -14,7 +14,7 @@ class JacobiSolver(SLASolver):
         
         L, D, U = MatrixOperations.LDUdecompose(A)
 
-        D_inv = Matrix(np.linalg.inv(D.to_numpy()))
+        D_inv = D.inverse()
 
         B = -1*D_inv.multiply(L.add(U))
         g = D_inv.multiply(b)   
@@ -23,7 +23,7 @@ class JacobiSolver(SLASolver):
         for iteration in range(1, self.max_iterations + 1):
             x_new = B.multiply(x).add(g)
             
-            self._error = np.linalg.norm(x_new.subtract(x).to_numpy())
+            self._error = x_new.subtract(x).norm()
             self._iterations = iteration
             x = x_new
             
