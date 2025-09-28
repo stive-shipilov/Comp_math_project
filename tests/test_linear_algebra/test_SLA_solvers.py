@@ -7,7 +7,7 @@ from comp_math.linear_algebra.objects.vector import Vector
 class TestSLASolvers:
     """Тесты для решения СЛАУ"""
     
-    def test_gauss_SLA_solver(self):
+    def test_SLA_solvers(self):
         """Тест создания вектора"""
         gauss_solver = SLASolverRegistry.create_solver("gauss")
         jacobi_solver = SLASolverRegistry.create_solver("jacobi")
