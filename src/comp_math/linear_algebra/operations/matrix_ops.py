@@ -46,4 +46,4 @@ class MatrixOperations:
             D[i, i] = A[i, i]
 
         return D
-    
+        

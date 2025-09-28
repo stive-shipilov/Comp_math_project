@@ -8,6 +8,7 @@ class TestSLASolvers:
     def test_gauss_SLA_solver(self):
         """Тест создания вектора"""
         gauss_solver = SLASolverRegistry.create_solver("gauss")
+        jacobi_solver = SLASolverRegistry.create_solver("jacobi")
 
         # Тестовая СЛАУ
         x_true = np.array([1.0, 2.0, 3.0])
@@ -19,5 +20,6 @@ class TestSLASolvers:
         ])
         
         b = A @ x_true
-        x_calc = gauss_solver.solve(A, b)
-        assert np.allclose(x_calc, x_true, atol=1e-10)
+        assert np.allclose(gauss_solver.solve(A, b), x_true, atol=1e-10)
+        assert np.allclose(jacobi_solver.solve(A, b), x_true, atol=1e-10)
+

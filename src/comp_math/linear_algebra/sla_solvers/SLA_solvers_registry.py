@@ -1,5 +1,6 @@
 from typing import Dict, Type, Any
 from .solvers.direct.gauss_SLA_solver import GaussSolver
+from .solvers.iterative.jacobi_SLA_sovler import JacobiSolver
 from .base_SLA_solver import SLASolver
 
 
@@ -8,6 +9,7 @@ class SLASolverRegistry:
     
     _solvers: Dict[str, Type[SLASolver]] = {
         "gauss": GaussSolver,
+        "jacobi": JacobiSolver
     }
 
     @classmethod
