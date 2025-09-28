@@ -24,6 +24,16 @@ class Vector:
             result[i] = self[i] + other[i]
         return result
     
+    def subtract(self, other: 'Vector') -> 'Vector':
+        """Вычитание векторов"""
+        if self.dim != other.dim:
+            raise ValueError("Размеры векторов не совпадают")
+        
+        result = Vector(np.zeros(self.dim))
+        for i in range(self.dim):
+            result[i] = self[i] - other[i]
+        return result
+    
     def scalar_mlp(self, other: 'Vector') -> float:
         """Скалярное произведение"""
         if self.dim != other.dim:

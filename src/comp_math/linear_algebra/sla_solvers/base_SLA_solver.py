@@ -2,6 +2,10 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 import numpy as np
 
+from ..objects.matrix import Matrix
+from ..objects.vector import Vector
+
+
 class SLASolver(ABC):
     """Абстрактный базовый класс для решателей СЛАУ"""
     
@@ -11,37 +15,31 @@ class SLASolver(ABC):
         self._iterations = 0
         self._error = 0.0
     
-    def solve(self, A: List[List[float]], b: List[float]) -> List[float]:
+    def solve(self, A: Matrix, b: Vector) -> Vector:
         """Публичный метод решения с единой точкой валидации"""
-        A_np, b_np = self._validate_and_convert_input(A, b)
-        self._prepare_solver(A_np, b_np)
-        return self._solve_implementation(A_np, b_np)
+        A_matrix, b_vector = self._validate_and_convert_input(A, b)
+        self._prepare_solver(A_matrix, b_vector)
+        return self._solve_implementation(A_matrix, b_vector)
     
     @abstractmethod
-    def _solve_implementation(self, A: np.ndarray, b: np.ndarray) -> np.ndarray:
+    def _solve_implementation(self, A: np.ndarray, b: np.ndarray) \
+            -> np.ndarray:
         """Метод джля реализации алгоритма"""
         pass
     
-    def _validate_and_convert_input(self, A, b) -> Tuple[np.ndarray, np.ndarray]:
-        """Единая валидация и преобразование входных данных"""
-        A_np = np.array(A, dtype=float)
-        b_np = np.array(b, dtype=float)
-        
-        # Проверка размеров
-        if A_np.ndim != 2:
-            raise ValueError("Матрица A должна быть двумерной")
-        if b_np.ndim != 1:
-            raise ValueError("Вектор b должен быть одномерным")
-        if A_np.shape[0] != A_np.shape[1]:
+    def _validate_and_convert_input(self, A: Matrix, b: Vector) \
+            -> Tuple[Matrix, Vector]:
+        """Единая валидация и преобразование входных данных"""  
+        if A.shape[0] != A.shape[1]:
             raise ValueError("Матрица A должна быть квадратной")
-        if A_np.shape[0] != b_np.shape[0]:
+        if A.shape[0] != b.dim:
             raise ValueError("Размеры A и b не совпадают")
-        if A_np.shape[0] == 0:
+        if A.shape[0] == 0:
             raise ValueError("Система не может быть пустой")
         
-        return A_np, b_np
+        return A, b
     
-    def _prepare_solver(self, A: np.ndarray, b: np.ndarray):
+    def _prepare_solver(self, A: Matrix, b: Vector):
         """Подготовка решателя"""
         self._iterations = 0
         self._error = 0.0

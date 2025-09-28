@@ -25,6 +25,17 @@ class Matrix:
                 result[i, j] = self[i, j] + other[i, j]
         return result
     
+    def subtract(self, other: 'Matrix') -> 'Matrix':
+        """Вычитание матриц через индексацию"""
+        if self.shape != other.shape:
+            raise ValueError("Размеры матриц не совпадают")
+        
+        result = Matrix(np.zeros(self.shape))
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                result[i, j] = self[i, j] - other[i, j]
+        return result
+    
     def multiply(self, other: Union['Matrix', 'Vector', float]) -> Union['Matrix', 'Vector']:
         """Умножение матрицы на матрицу, вектор или скаляр"""
         if isinstance(other, (int, float)):

@@ -1,15 +1,15 @@
 import numpy as np
 from ...base_SLA_solver import SLASolver
+from ....objects.matrix import Matrix
+from ....objects.vector import Vector
 
 
 class GaussSolver(SLASolver):
     """Решение СЛАУ методом Гаусса"""
     
-    def _solve_implementation(self, A, b):
-        A = np.array(A, dtype=float)
-        b = np.array(b, dtype=float)
-        n = len(b)
-        x = np.zeros(n)
+    def _solve_implementation(self, A: Matrix, b: Vector) -> Vector:
+        n = b.dim
+        x = Vector(np.zeros(n))
 
         # Прямой ход
         for i in range(0, n):

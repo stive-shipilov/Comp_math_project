@@ -1,29 +1,29 @@
 import numpy as np
 from ...base_SLA_solver import SLASolver
 from comp_math.linear_algebra.operations.matrix_ops import MatrixOperations
-from comp_math.linear_algebra.operations.matrix_vector_ops import MatrixVectorOperations
+from ....objects.matrix import Matrix
+from ....objects.vector import Vector
+
 
 class JacobiSolver(SLASolver):
     """Решение СЛАУ методом Якоби"""
     
     def _solve_implementation(self, A, b):
-        A = np.array(A, dtype=float)
-        b = np.array(b, dtype=float)
-        n = len(b)
-        x = np.zeros(n)
+        n = b.dim
+        x = Vector(np.zeros(n))
         
         L, D, U = MatrixOperations.LDUdecompose(A)
 
-        D_inv = np.linalg.inv(D)
+        D_inv = Matrix(np.linalg.inv(D.to_numpy()))
 
-        B = -D_inv @ (L + U)
-        g = MatrixVectorOperations.matvec(D_inv, b)   
+        B = D_inv.multiply(L.add(U)).multiply(-1)
+        g = D_inv.multiply(b)   
 
         # Итерации
         for iteration in range(1, self.max_iterations + 1):
-            x_new = MatrixVectorOperations.matvec(B, x) + g
+            x_new = B.multiply(x).add(g)
             
-            self._error = np.linalg.norm(x_new - x)
+            self._error = np.linalg.norm(x_new.subtract(x).to_numpy())
             self._iterations = iteration
             x = x_new
             
