@@ -11,11 +11,41 @@ class SLASolver(ABC):
         self._iterations = 0
         self._error = 0.0
     
-    @abstractmethod
     def solve(self, A: List[List[float]], b: List[float]) -> List[float]:
-        """Решает систему уравнений Ax = b"""
+        """Публичный метод решения с единой точкой валидации"""
+        A_np, b_np = self._validate_and_convert_input(A, b)
+        self._prepare_solver(A_np, b_np)
+        return self._solve_implementation(A_np, b_np)
+    
+    @abstractmethod
+    def _solve_implementation(self, A: np.ndarray, b: np.ndarray) -> np.ndarray:
+        """Метод джля реализации алгоритма"""
         pass
     
+    def _validate_and_convert_input(self, A, b) -> Tuple[np.ndarray, np.ndarray]:
+        """Единая валидация и преобразование входных данных"""
+        A_np = np.array(A, dtype=float)
+        b_np = np.array(b, dtype=float)
+        
+        # Проверка размеров
+        if A_np.ndim != 2:
+            raise ValueError("Матрица A должна быть двумерной")
+        if b_np.ndim != 1:
+            raise ValueError("Вектор b должен быть одномерным")
+        if A_np.shape[0] != A_np.shape[1]:
+            raise ValueError("Матрица A должна быть квадратной")
+        if A_np.shape[0] != b_np.shape[0]:
+            raise ValueError("Размеры A и b не совпадают")
+        if A_np.shape[0] == 0:
+            raise ValueError("Система не может быть пустой")
+        
+        return A_np, b_np
+    
+    def _prepare_solver(self, A: np.ndarray, b: np.ndarray):
+        """Подготовка решателя"""
+        self._iterations = 0
+        self._error = 0.0
+
     @property
     def iterations_count(self) -> int:
         """Количество выполненных итераций"""
