@@ -16,7 +16,7 @@ class JacobiSolver(SLASolver):
 
         D_inv = Matrix(np.linalg.inv(D.to_numpy()))
 
-        B = D_inv.multiply(L.add(U)).multiply(-1)
+        B = -1*D_inv.multiply(L.add(U))
         g = D_inv.multiply(b)   
 
         # Итерации
