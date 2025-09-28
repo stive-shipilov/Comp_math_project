@@ -37,3 +37,14 @@ class TestVectorOperations:
         assert np.array_equal(L.to_numpy(), expected_L)
         assert np.array_equal(D.to_numpy(), expected_D)
         assert np.array_equal(U.to_numpy(), expected_U) 
+    
+    def test_matrix_inversion(self):
+        A = Matrix([[4, 1, 1],
+                    [1, 5, 2],
+                    [1, 2, 6]])
+
+        A_inv = A.inverse()
+
+        result = A.multiply(A_inv)
+        expected = np.eye(3)
+        assert np.allclose(result.to_numpy(), expected, atol = 1e-15)
