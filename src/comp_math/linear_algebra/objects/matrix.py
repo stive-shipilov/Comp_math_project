@@ -13,6 +13,27 @@ class Matrix:
     
     def __setitem__(self, indices, value):
         self._data[indices] = value
+
+    def __mul__(self, other):
+        """Умножение: matrix * number или наоборот"""
+        if isinstance(other, (int, float)):
+            return self._multiply_scalar(other)
+        else:
+            return self.multiply(other)
+    
+    def __rmul__(self, other):
+        """Умножение: number * matrix в обратном порядке"""
+        if isinstance(other, (int, float)):
+            return self._multiply_scalar(other)
+        else:
+            return NotImplemented
+        
+    def __truediv__(self, scalar):
+        """Деление на скаляр: matrix / number"""
+        if isinstance(scalar, (int, float)):
+            return self._multiply_scalar(1.0 / scalar)
+        else:
+            return NotImplemented
     
     def add(self, other: 'Matrix') -> 'Matrix':
         """Сложение матриц через индексацию"""
