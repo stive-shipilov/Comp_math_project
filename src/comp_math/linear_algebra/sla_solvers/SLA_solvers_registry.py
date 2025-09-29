@@ -16,8 +16,7 @@ class SLASolverRegistry:
     def create_solver(cls, method: str, **kwargs: Any) -> SLASolver:
         """Создает экземпляр решателя по имени метода"""
         if method not in cls._solvers:
-            available = ", ".join(cls._solvers.keys())
-            raise ValueError(f"Неизвестный метод '{method}'. Доступны только: {available}")
+            raise ValueError(f"Неизвестный метод '{method}'. Доступны только: {cls._solvers.keys()}")
         
         solver_class = cls._solvers[method]
         return solver_class(**kwargs)
