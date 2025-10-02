@@ -2,6 +2,7 @@ import numpy as np
 from typing import Tuple
 from numpy.typing import NDArray
 from ..objects.matrix import Matrix
+from ..objects.vector import Vector
 
 
 class MatrixOperations:
@@ -15,6 +16,26 @@ class MatrixOperations:
         D = MatrixOperations._extract_diag_matrix(A)
 
         return L, D, U
+    
+    @staticmethod
+    def get_spectral_radius(A: Matrix, max_iterations: int = 1000, 
+                       tolerance=1e-10) -> float:
+        "Cтепенной метод для нахождения спектрального радиуса матрицы"
+        n = A.shape[0]
+        m = 0
+        v = Vector(np.ones(n))
+        w = Vector(np.zeros(n))
+        for i in range(max_iterations):
+            w = A.multiply(v)
+            m_new = w.norm()
+            error =  m_new - m
+            m = m_new
+            v = w/m
+            if np.abs(error) < tolerance:
+                break
+
+        return m
+
     
     @staticmethod
     def _extract_upper_triangular(A: Matrix):

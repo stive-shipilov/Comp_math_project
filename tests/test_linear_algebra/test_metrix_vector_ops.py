@@ -48,3 +48,13 @@ class TestVectorOperations:
         result = A.multiply(A_inv)
         expected = np.eye(3)
         assert np.allclose(result.to_numpy(), expected, atol = 1e-15)
+
+    def test_spectrum_radius(self):
+        A = Matrix([[4, 0, 0],
+                    [0, -10, 0],
+                    [0, 0, 6]])
+        
+        spectrum_radius = MatrixOperations.get_spectral_radius(A)
+        expected = 10
+        assert np.allclose(spectrum_radius, expected, atol = 1e-10)
+
