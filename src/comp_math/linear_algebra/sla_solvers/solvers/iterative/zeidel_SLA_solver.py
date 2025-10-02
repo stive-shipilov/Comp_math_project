@@ -22,11 +22,11 @@ class ZeidelSolver(SLASolver):
         for iteration in range(1, self.max_iterations + 1):
             x_new = B.multiply(x).add(g)
             
-            self._error = x_new.subtract(x).norm()
+            self._add_error(x_new.subtract(x).norm())
             self._iterations = iteration
             x = x_new
             
-            if self._error < self.tolerance:
+            if self._last_error < self.tolerance:
                 break
             
         return x
