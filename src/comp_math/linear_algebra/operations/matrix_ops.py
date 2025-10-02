@@ -20,21 +20,42 @@ class MatrixOperations:
     @staticmethod
     def get_spectral_radius(A: Matrix, max_iterations: int = 1000, 
                        tolerance=1e-10) -> float:
-        "Cтепенной метод для нахождения спектрального радиуса матрицы"
+        """Cтепенной метод для нахождения спектрального радиуса матрицы
+        - Используется задание центрированного случайного начального
+        вектора, чтобы избежать плохое задание начального вектора 
+        - Центрируем чтобы избежать того, что вектор
+        будет ортогонален одному из собственных векторов
+        - Используется отношение рэлея, которое позволяет более 
+        точно оценить радиус
+        """
         n = A.shape[0]
-        m = 0
-        v = Vector(np.ones(n))
-        w = Vector(np.zeros(n))
+    
+        # Начальный вектор
+        v = Vector(np.random.rand(n) - 0.5)
+        v = v / v.norm()
+        
+        lambda_prev = 0
+        
         for i in range(max_iterations):
             w = A.multiply(v)
-            m_new = w.norm()
-            error =  m_new - m
-            m = m_new
-            v = w/m
-            if np.abs(error) < tolerance:
+            w_norm = w.norm()
+            
+            # Если вектор равен 0 -> радиус тоде ноль
+            if w_norm < 1e-12:
+                return 0.0
+            v_new = w / w_norm
+            
+            # Отношение Рэлея для более точной оценки радиуса
+            lambda_new = v.scalar_mlp(w) / v.scalar_mlp(v)
+            
+            # Проверка сходимости алгоритма
+            if abs(lambda_new - lambda_prev) < tolerance:
                 break
-
-        return m
+                
+            v = v_new
+            lambda_prev = lambda_new
+        
+        return abs(lambda_new)
 
     
     @staticmethod
