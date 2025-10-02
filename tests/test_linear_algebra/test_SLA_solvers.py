@@ -11,6 +11,12 @@ class TestSLASolvers:
         """Тест создания вектора"""
         gauss_solver = SLASolverRegistry.create_solver("gauss")
         jacobi_solver = SLASolverRegistry.create_solver("jacobi")
+        zeidel_solver = SLASolverRegistry.create_solver("zeidel")
+        relaxation_solver = SLASolverRegistry.create_solver("relaxation")
+        cg_solver = SLASolverRegistry.create_solver("cg")
+        bcg_solver = SLASolverRegistry.create_solver("bcg")
+        sbcg_solver = SLASolverRegistry.create_solver("sbcg")
+
 
         # Тестовая СЛАУ
         x_true = Vector([1.0, 2.0, 3.0])
@@ -24,4 +30,8 @@ class TestSLASolvers:
         b = A.multiply(x_true)
         assert np.allclose(gauss_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
         assert np.allclose(jacobi_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
-
+        assert np.allclose(zeidel_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+        assert np.allclose(relaxation_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+        assert np.allclose(cg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+        assert np.allclose(bcg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+        assert np.allclose(sbcg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
