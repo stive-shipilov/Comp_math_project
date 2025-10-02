@@ -1,6 +1,6 @@
 from typing import Dict, Type, Any
 from .solvers.direct.gauss_SLA_solver import GaussSolver
-from .solvers.iterative.jacobi_SLA_sovler import JacobiSolver
+from .solvers.iterative.jacobi_SLA_solver import JacobiSolver
 from .solvers.iterative.zeidel_SLA_solver import ZeidelSolver
 from .base_SLA_solver import SLASolver
 
