@@ -15,6 +15,7 @@ class TestSLASolvers:
         relaxation_solver = SLASolverRegistry.create_solver("relaxation")
         cg_solver = SLASolverRegistry.create_solver("cg")
         bcg_solver = SLASolverRegistry.create_solver("bcg")
+        sbcg_solver = SLASolverRegistry.create_solver("sbcg")
 
 
         # Тестовая СЛАУ
@@ -33,4 +34,4 @@ class TestSLASolvers:
         assert np.allclose(relaxation_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
         assert np.allclose(cg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
         assert np.allclose(bcg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
-
+        assert np.allclose(sbcg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
