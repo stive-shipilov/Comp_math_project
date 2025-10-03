@@ -14,6 +14,8 @@ class TestSLASolvers:
         zeidel_solver = SLASolverRegistry.create_solver("zeidel")
         relaxation_solver = SLASolverRegistry.create_solver("relaxation")
         cg_solver = SLASolverRegistry.create_solver("cg")
+        bcg_solver = SLASolverRegistry.create_solver("bcg")
+
 
         # Тестовая СЛАУ
         x_true = Vector([1.0, 2.0, 3.0])
@@ -30,3 +32,5 @@ class TestSLASolvers:
         assert np.allclose(zeidel_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
         assert np.allclose(relaxation_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
         assert np.allclose(cg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+        assert np.allclose(bcg_solver.solve(A, b).to_numpy(), x_true.to_numpy(), atol=1e-10)
+

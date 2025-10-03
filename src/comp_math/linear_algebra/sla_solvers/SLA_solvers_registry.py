@@ -4,6 +4,7 @@ from .solvers.iterative.jacobi_SLA_solver import JacobiSolver
 from .solvers.iterative.zeidel_SLA_solver import ZeidelSolver
 from .solvers.iterative.relaxation_SLA_solver import RelaxationSolver
 from .solvers.variational.cg_SLA_solver import CGsolver
+from .solvers.variational.bcg_SLA_solver import BCGsolver
 from .base_SLA_solver import SLASolver
 
 
@@ -15,7 +16,8 @@ class SLASolverRegistry:
         "jacobi": JacobiSolver,
         "zeidel": ZeidelSolver,
         "relaxation": RelaxationSolver,
-        "cg": CGsolver
+        "cg": CGsolver,
+        "bcg": BCGsolver
     }
 
     @classmethod
