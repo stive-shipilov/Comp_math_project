@@ -13,7 +13,9 @@ class SLASolver(ABC):
         self.max_iterations = max_iterations
         self.tolerance = tolerance
         self._iterations = 0
-        self._error = 0.0
+        self._last_error = 0.0
+        self._errors = []
+        
     
     def solve(self, A: Matrix, b: Vector) -> Vector:
         """Публичный метод решения с единой точкой валидации"""
@@ -42,7 +44,12 @@ class SLASolver(ABC):
     def _prepare_solver(self, A: Matrix, b: Vector):
         """Подготовка решателя"""
         self._iterations = 0
-        self._error = 0.0
+        self._errors = []
+        self._last_error = 0.0
+
+    def _add_error(self, error: float):
+        self._errors.append(error)
+        self._last_error = error
 
     @property
     def iterations_count(self) -> int:
@@ -50,9 +57,14 @@ class SLASolver(ABC):
         return self._iterations
     
     @property
+    def get_errors(self) -> list[float]:
+        """Получить массив ошибок"""
+        return self._errors
+    
+    @property
     def last_error(self) -> float:
         """Последняя достигнутая погрешность"""
-        return self._error
+        return self._last_error
     
     def validate_input(self, A, b):
         """Проверка корректности входных данных"""
