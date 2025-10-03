@@ -32,9 +32,9 @@ class SBCGsolver(SLASolver):
             r = s.subtract(omega*t)  
 
             
-            self._error = r.norm()
+            self._add_error(r.norm())
             self._iterations = iteration
-            if self._error < self.tolerance:
+            if self._last_error < self.tolerance:
                 break
 
             rho = rho_new

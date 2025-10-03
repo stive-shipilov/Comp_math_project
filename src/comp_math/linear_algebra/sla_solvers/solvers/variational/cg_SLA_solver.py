@@ -24,9 +24,9 @@ class CGsolver(SLASolver):
             z = r_new.add(beta*z)
 
             
-            self._error = r_new.norm()
+            self._add_error(r_new.norm())
             self._iterations = iteration
-            if self._error < self.tolerance:
+            if self._last_error < self.tolerance:
                 break
             
             z = r_new.add(z*(beta))
