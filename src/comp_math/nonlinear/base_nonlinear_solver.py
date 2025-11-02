@@ -148,6 +148,15 @@ class VariationalSolver1D(NonlinearSolver):
             
         return roots
     
+    def _default_basis_functions(self) -> List[Callable]:
+        """Возвращает базисные функции по умолчанию"""
+        return [
+            lambda x: 1,
+            lambda x: x,
+            lambda x: x**2,
+            lambda x: x**3
+        ]
+    
     @abstractmethod
     def _solve_implementation_variational(self, 
                                         functional: Callable[[float], float],

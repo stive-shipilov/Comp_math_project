@@ -1,9 +1,10 @@
 import math
 from typing import Callable, Tuple, Optional
 import numpy as np
+
+from comp_math.linear_algebra.objects.matrix import Matrix
+from comp_math.linear_algebra.sla_solvers.SLA_solvers_registry import SLASolverRegistry
 from ...base_nonlinear_solver import NonlinearSolver1D, NonlinearSolverND
-from comp_math.linear_algebra.operations.matrix_ops import MatrixOperations
-from ....linear_algebra.objects.matrix import Matrix
 from ....linear_algebra.objects.vector import Vector
 from comp_math.differentiation.numerical.numericalDifferentiator import NumericalDifferentiator
 from comp_math.differentiation.numerical.numericalJacobian import NumericalJacobian
@@ -52,30 +53,28 @@ class NewtonSolverND(NonlinearSolverND):
                                x0: np.ndarray,
                                J: Optional[Callable[[np.ndarray], np.ndarray]] = None) -> np.ndarray:
         x = x0.copy()
-        n = len(x)
         
         for _ in range(self.max_iterations):
             Fx = F(x)
             
-            # Проверяем сходимость по норме функции
-            if np.linalg.norm(Fx) < self.tolerance:
+            if Vector(Fx).norm() < self.tolerance:
                 return x
             
-            # Вычисляем якобиан
             if J is not None:
-                Jx = J(x)  # аналитический якобиан
+                Jx = J(x)
             else:
-                Jx = NumericalJacobian(F, x, 0.01)  # численный якобиан
+                Jx = NumericalJacobian.differentiate(F, x, 0.01)
             
+            # TODO: Сейчас здесь вознкает численная неастабильность из-за вырожденной матрицы
+            # и реализованные методы не справляются с этим 
+            # (поэтому пока поставлена заглушка в виде Numpy методов)
             try:
-                # Решаем линейную систему J(x) * Δx = -F(x)
                 delta_x = np.linalg.solve(Jx, -Fx)
             except np.linalg.LinAlgError:
-                # Если матрица вырождена, используем псевдообратную
                 delta_x = -np.linalg.pinv(Jx) @ Fx
             
             x_new = x + delta_x
-            error = np.linalg.norm(delta_x)
+            error = Vector(delta_x).norm()
             self._add_iteration(error)
             
             if error < self.tolerance:
