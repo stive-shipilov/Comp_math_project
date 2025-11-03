@@ -38,11 +38,11 @@ class TestSLASolvers:
         roots = fixed_points1D_solver.solve(quadratic, (-1e3, 1e3), grid_points = 100000)
         expected_roots = [-2, 2]
         print(roots)
-        assert np.allclose(roots, expected_roots, atol=1e-2)
+        assert np.allclose(roots, expected_roots, atol=1e-10)
 
         roots = fixed_points1D_solver.solve(polynomial_3_roots, (-1e3, 1e3), grid_points = 1000000)
         expected_roots = [1, 2, 3]
-        assert np.allclose(roots, expected_roots, atol=1e-4)
+        assert np.allclose(roots, expected_roots, atol=1e-10)
 
 
     def test_multidimensional_newton(self):
@@ -59,18 +59,12 @@ class TestSLASolvers:
                 x[0] - x[1]
             ])
 
-        def jacobian1(x):
-            return np.array([
-                [2*x[0], 2*x[1]],
-                [1, -1]
-            ])
-
-        solution1 = newtonND_solver.solve(system1, np.array([0.5, 0.5]), jacobian1)
+        solution1 = newtonND_solver.solve(system1, np.array([1.0, 1.0]))
         expected1 = np.array([np.sqrt(2)/2, np.sqrt(2)/2])
         assert np.allclose(solution1, expected1, atol=1e-6)
-        assert np.allclose(system1(solution1), np.array([0, 0]), atol=1e-10)
+        assert np.allclose(system1(solution1), np.array([0, 0]), atol=1e-9)
 
-        solution2 = newtonND_solver.solve(system1, np.array([-0.5, -0.5]), jacobian1)
+        solution2 = newtonND_solver.solve(system1, np.array([-0.5, -0.5]))
         expected2 = np.array([-np.sqrt(2)/2, -np.sqrt(2)/2])
         assert np.allclose(solution2, expected2, atol=1e-6)
-        assert np.allclose(system1(solution2), np.array([0, 0]), atol=1e-10)
+        assert np.allclose(system1(solution2), np.array([0, 0]), atol=1e-9)

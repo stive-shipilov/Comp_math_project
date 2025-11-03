@@ -10,14 +10,10 @@ def test_variational_equation_solver():
     """f(x) = x^2 - 4, корни: -2, 2"""
     def quadratic(x): return x**2 - 4
     
-    # Базисные функции
-    basis = [lambda x: 1]
-    
     roots = solver.solve(
         functional=quadratic,
         search_area=(-3, 3),
-        grid_points=1000,
-        basis_functions=basis
+        grid_points=1000
     )
     
     

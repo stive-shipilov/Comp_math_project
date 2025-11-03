@@ -1,6 +1,8 @@
 import math
 from typing import Callable, Tuple, Optional
 import numpy as np
+
+from comp_math.linear_algebra.sla_solvers.SLA_solvers_registry import SLASolverRegistry
 from ...base_nonlinear_solver import NonlinearSolver1D, NonlinearSolverND
 from comp_math.linear_algebra.operations.matrix_ops import MatrixOperations
 from ....linear_algebra.objects.matrix import Matrix
@@ -57,21 +59,17 @@ class NewtonSolverND(NonlinearSolverND):
         for _ in range(self.max_iterations):
             Fx = F(x)
             
-            # Проверяем сходимость по норме функции
             if np.linalg.norm(Fx) < self.tolerance:
                 return x
             
-            # Вычисляем якобиан
             if J is not None:
-                Jx = J(x)  # аналитический якобиан
+                Jx = J(x)
             else:
-                Jx = NumericalJacobian(F, x, 0.01)  # численный якобиан
+                Jx = NumericalJacobian.differentiate(F, x, 0.01)
             
             try:
-                # Решаем линейную систему J(x) * Δx = -F(x)
                 delta_x = np.linalg.solve(Jx, -Fx)
             except np.linalg.LinAlgError:
-                # Если матрица вырождена, используем псевдообратную
                 delta_x = -np.linalg.pinv(Jx) @ Fx
             
             x_new = x + delta_x
