@@ -4,9 +4,10 @@ import numpy as np
 
 from ..objects.matrix import Matrix
 from ..objects.vector import Vector
+from ...core.base_solver import BaseNumericalMethod
 
 
-class SLASolver(ABC):
+class SLASolver(BaseNumericalMethod):
     """Абстрактный базовый класс для решателей СЛАУ"""
     
     def __init__(self, max_iterations=1000, tolerance=1e-10):

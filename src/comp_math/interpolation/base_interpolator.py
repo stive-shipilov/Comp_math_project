@@ -3,9 +3,10 @@ from typing import Optional
 import numpy as np
 from numpy.typing import NDArray
 import warnings
+from ..core.base_solver import BaseNumericalMethod
 
 
-class BaseInterpolator(ABC):
+class BaseInterpolator(BaseNumericalMethod):
     def __init__(self):
         self.x: Optional[NDArray[np.float64]] = None
         self.y: Optional[NDArray[np.float64]] = None

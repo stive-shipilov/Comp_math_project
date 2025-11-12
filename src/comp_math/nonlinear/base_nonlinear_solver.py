@@ -4,9 +4,10 @@ import numpy as np
 
 from ..linear_algebra.objects.matrix import Matrix
 from ..linear_algebra.objects.vector import Vector
+from ..core.base_solver import BaseNumericalMethod
 
 
-class NonlinearSolver(ABC):
+class NonlinearSolver(BaseNumericalMethod):
     """Абстрактный базовый класс для решателей нелинейных уравнений"""
     
     def __init__(self, max_iterations=1000, tolerance=1e-10, verbose=False):
