@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Callable
+from ..core.base_solver import BaseNumericalMethod
 
-class BaseDifferentiator(ABC):
+
+class BaseDifferentiator(BaseNumericalMethod):
     """Абстрактный класс для всех методов дифференцирования"""
     
     @abstractmethod
