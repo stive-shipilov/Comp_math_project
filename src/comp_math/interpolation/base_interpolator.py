@@ -10,6 +10,7 @@ class BaseInterpolator(ABC):
         self.x: Optional[NDArray[np.float64]] = None
         self.y: Optional[NDArray[np.float64]] = None
         self.min_node_count: int = 2
+        self.runge_max_nodes: int = 20
         self._is_fitted: bool = False
 
     def fit(self, x: NDArray[np.float64], y: NDArray[np.float64]) -> 'BaseInterpolator':
@@ -35,13 +36,13 @@ class BaseInterpolator(ABC):
         pass
 
     def _validate_input(self):
-        if self.x.shape[0] != self.y.shape[1]:
+        if self.x.shape[0] != self.y.shape[0]:
             raise ValueError("Размерности данных узлов не совпадают!")
         
         if self.x.shape[0] < self.min_node_count:
             raise ValueError(f"Недостаточно узлов, требуется хотя бы - {self.min_node_count}")
 
-        if self.x.shape[0] != self.y.shape[1]:
+        if self.x.shape[0] > self.runge_max_nodes:
             warnings.warn("Результаты могут быть некорректными из-за эффетка Рунге." /
                           "Уменьшите количество узлов!", UserWarning)
 

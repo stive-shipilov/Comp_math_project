@@ -1,10 +1,12 @@
 from typing import Dict, Type, Any
 from ..interpolation.base_interpolator import BaseInterpolator
+from ..interpolation.impl.newton_interpolator import NewtonInterpolator
 
 class InterpolatorRegistry:
     """Фабрика для создания экземпляров интерполяторов СЛАУ"""
     
     _solvers: Dict[str, Type[BaseInterpolator]] = {
+        "newton": NewtonInterpolator,
     }
 
     @classmethod
