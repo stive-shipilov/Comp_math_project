@@ -20,3 +20,27 @@ def test_interpolators():
     y_actual = interpolator(x_test)
     
     assert np.allclose(y_actual, y_expected, rtol=1e-10)
+
+    interpolator = InterpolatorRegistry.create_solver("cubic_spline")
+    x = np.array([0.0, 1.0, 2.0])
+    y = np.array([1.0, 2.0, 3.0])
+    
+    interpolator.fit(x, y)
+    result = interpolator([0.5, 1.5])
+    
+    expected = np.array([1.5, 2.5])
+    assert np.allclose(result, expected, rtol=1e-10)
+
+    # Тест на точное воспроизведение квадратичной функции
+    x = np.array([0, 1, 2, 3, 4])
+    y = 2*x**2 + 3*x + 1
+    
+    interpolator = InterpolatorRegistry.create_solver("lsq")
+    interpolator.fit(x, y)
+    
+    x_test = np.array([0.5, 1.5, 2.5])
+    y_pred = interpolator(x_test)
+    y_true = 2*x_test**2 + 3*x_test + 1
+    
+    np.testing.assert_allclose(y_pred, y_true, rtol=1e-10)
+    print("✅ МНК точно воспроизводит полиномиальную функцию")
