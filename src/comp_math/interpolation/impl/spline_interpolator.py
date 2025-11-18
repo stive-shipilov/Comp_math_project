@@ -43,14 +43,14 @@ class CubicSpline(BaseInterpolator):
     
     def _evaluate(self, x_query):
         self._prepating_fitting(self.x, self.y)
-        x_query = np.asarray(x_query)
-        result = np.zeros_like(x_query)
+        x_query = Vector(np.asarray(x_query))
+        result = Vector(np.zeros(x_query.dim))
         
-        for i, x_val in enumerate(x_query):
+        for i in range(0, x_query.dim):
             # Находим отрезок простым перебором
-            idx = self._find_segment_for_point(x_val)
+            idx = self._find_segment_for_point(x_query[i])
             a, b, c, d = self.coeffs[idx]
-            dx = x_val - self.x[idx]
+            dx = x_query[i] - self.x[idx]
             result[i] = a + b*dx + c*dx**2 + d*dx**3
         
         return result

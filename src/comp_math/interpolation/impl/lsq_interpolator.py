@@ -23,16 +23,17 @@ class UniversalLSQ(BaseInterpolator):
         self._is_fitted = False
         
     def _get_coeffs(self):
-        A_list = []
-        for func in self.basis_functions:
-            col = np.asarray(func(self.x))
-            if col.ndim == 0:
+        A = Matrix(np.zeros((len(self.x), len(self.basis_functions))))
+        col = Vector(np.zeros(len(self.x)))
+        for k, func in enumerate(self.basis_functions):
+            for i in range(0, len(self.x)):
+                col[i] = func(self.x[i])
+            if col.dim == 1:
                 # если функция вернула скаляр, заполняем массивом !!
-                col = np.full(self.x.shape, col)
-            col = col.reshape(-1, 1)
-            A_list.append(col)
-
-        A = Matrix(np.hstack(A_list))
+                for i in range(0, len(self.x)-1):
+                    col[i] = func(self.x[i])
+            for i in range(0, col.dim):
+                A[i, k] = col[i]
 
         AtA = A.transpose().multiply(A)
         AtY = A.transpose().multiply(Vector(self.y))
@@ -45,10 +46,11 @@ class UniversalLSQ(BaseInterpolator):
         
     def _evaluate(self, x_query):
         self._get_coeffs()
-        x_query = np.asarray(x_query)
-        result = np.zeros_like(x_query, dtype=float)
+        x_query = Vector(np.asarray(x_query))
+        result = Vector(np.zeros(x_query.dim))
         
         for coeff, func in zip(self.coefficients, self.basis_functions):
-            result += coeff * func(x_query)
+            for i in range(0, x_query.dim):
+                result[i] += coeff * func(x_query[i])
 
         return result
