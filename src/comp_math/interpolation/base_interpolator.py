@@ -3,6 +3,8 @@ from typing import Optional
 import numpy as np
 from numpy.typing import NDArray
 import warnings
+
+from comp_math.linear_algebra.objects.vector import Vector
 from ..core.base_solver import BaseNumericalMethod
 
 
@@ -33,7 +35,7 @@ class BaseInterpolator(BaseNumericalMethod):
         return self._evaluate(x)
     
     @abstractmethod
-    def _evaluate(self, x_query):
+    def _evaluate(self, x_query) -> Vector:
         pass
 
     def _validate_input(self):
