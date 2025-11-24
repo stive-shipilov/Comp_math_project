@@ -34,6 +34,14 @@ class BaseInterpolator(BaseNumericalMethod):
             
         return self._evaluate(x)
     
+    def extrapolate(self, x):
+        # Проверяем что все точки за пределами узлов
+        x_min, x_max = np.min(self.x), np.max(self.x)
+        inside_mask = (x >= x_min) & (x <= x_max)
+        if np.any(inside_mask):
+            raise ValueError("Точка для экстраполяции лежит внутри сетки. Используйте интерполяцию")
+        return self._evaluate(x)
+    
     @abstractmethod
     def _evaluate(self, x_query) -> Vector:
         pass
