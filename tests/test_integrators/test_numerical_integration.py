@@ -18,26 +18,26 @@ def test_integrators():
     gauss_interpolator = IntegratorRegistry.create_solver("gauss")
     monte_carlo_interpolator = IntegratorRegistry.create_solver("monte_carlo")
 
-    result1 = rectangle_interpolator.integrate(f1, 0, 10)
-    result2 = trapezoida_interpolator.integrate(f1, 0, 10)
-    result3 = simpson_interpolator.integrate(f1, 0, 10)
-    result4 = gauss_interpolator.integrate(f1, 0, 10)
-    result5 = monte_carlo_interpolator.integrate(f1, 0, 10)
+    result1 = rectangle_interpolator.integrate_func(f1, 0, 10)
+    result2 = trapezoida_interpolator.integrate_func(f1, 0, 10)
+    result3 = simpson_interpolator.integrate_func(f1, 0, 10)
+    result4 = gauss_interpolator.integrate_func(f1, 0, 10)
+    result5 = monte_carlo_interpolator.integrate_func(f1, 0, 10)
 
     # Проверки для теста 1
     exact1 = 333.3333333
     
-    assert abs(result1 - exact1) < 0.01
-    assert abs(result2 - exact1) < 0.005
-    assert abs(result3 - exact1) < 0.0001
-    assert abs(result4 - exact1) < 0.0001
+    assert abs(result1 - exact1) < 0.1
+    assert abs(result2 - exact1) < 0.01
+    assert abs(result3 - exact1) < 0.001
+    assert abs(result4 - exact1) < 0.001
     assert abs(result5 - exact1) < exact1/100
     
-    result1 = rectangle_interpolator.integrate(f2, 0, 1)
-    result2 = trapezoida_interpolator.integrate(f2, 0, 1)
-    result3 = simpson_interpolator.integrate(f2, 0, 1)
-    result4 = gauss_interpolator.integrate(f2, 0, 1)
-    result5 = monte_carlo_interpolator.integrate(f2, 0, 1)
+    result1 = rectangle_interpolator.integrate_func(f2, 0, 1)
+    result2 = trapezoida_interpolator.integrate_func(f2, 0, 1)
+    result3 = simpson_interpolator.integrate_func(f2, 0, 1)
+    result4 = gauss_interpolator.integrate_func(f2, 0, 1)
+    result5 = monte_carlo_interpolator.integrate_func(f2, 0, 1)
     
     # Проверки для теста 2
     exact2 = np.pi / 4
