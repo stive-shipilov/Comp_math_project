@@ -19,18 +19,29 @@ class GaussIntegrator(BaseIntegrator):
         nodes, weights = leggauss(n)
         return nodes, weights
         
-    def _compute_integral(self, func: Callable[[float], float], 
+    def integrate_func(self, func: Callable[[float], float], 
                       a: float, b: float, **kwargs) -> float:
-        # Преобразуем каждый узел
-        x_transformed = []
-        for node in self.nodes:
-            transformed = 0.5 * (b - a) * node + 0.5 * (a + b)
-            x_transformed.append(transformed)
-        
-        y = func(np.array(x_transformed))
-        
-        weighted_sum = 0.0
-        for i in range(len(self.weights)):
-            weighted_sum += self.weights[i] * y[i]
-        
-        return 0.5 * (b - a) * weighted_sum
+        """Переопределенный метод для Гаусса"""
+        self._validate_input(a, b)
+        x_transformed = 0.5 * (b - a) * self.nodes + 0.5 * (a + b)
+        y = func(x_transformed)
+        weighted_sum = np.dot(self.weights, y)
+        self.result = 0.5 * (b - a) * weighted_sum
+        self._is_computed = True
+        return self.result
+    
+    def integrate_table(self, x: NDArray[np.float64], 
+                        y: NDArray[np.float64]) -> float:
+        """Гаусс не поддерживает табличные данные напрямую"""
+        raise NotImplementedError(
+            "Метод Гаусса не поддерживает интегрирование по табличным данным напрямую. "
+            "Нужно для этого использовать интерполяции."
+        )
+    
+    def _compute_integral(self, x: NDArray[np.float64], 
+                         y: NDArray[np.float64],
+                         a: float, b: float) -> float:
+        """Для совместимости с базовым классом"""
+        raise NotImplementedError(
+            "Метод Гаусса требует использования integrate_func с функцией"
+        )
