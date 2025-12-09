@@ -143,7 +143,7 @@ class VariationalSolver1D(NonlinearSolver):
             self._validate_input_variational(functional, interval, basis_functions)
             self._prepare_solver()
             root = self._solve_implementation_variational(
-                functional, interval, basis_functions, boundary_conditions
+                functional, interval, basis_functions
             )
             roots.append(root)
             

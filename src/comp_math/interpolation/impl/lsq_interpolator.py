@@ -30,7 +30,7 @@ class UniversalLSQ(BaseInterpolator):
                 col[i] = func(self.x[i])
             if col.dim == 1:
                 # если функция вернула скаляр, заполняем массивом !!
-                for i in range(0, len(self.x)-1):
+                for i in range(0, len(self.x)):
                     col[i] = func(self.x[i])
             for i in range(0, col.dim):
                 A[i, k] = col[i]

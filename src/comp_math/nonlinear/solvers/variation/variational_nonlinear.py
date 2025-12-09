@@ -1,6 +1,8 @@
 from typing import Callable, Tuple, List
 import numpy as np
 
+from comp_math.differentiation.numerical.numericalDifferentiator import NumericalDifferentiator
+from comp_math.integration.integrator_registry import IntegratorRegistry
 from comp_math.linear_algebra.objects.matrix import Matrix
 from comp_math.linear_algebra.objects.vector import Vector
 from comp_math.linear_algebra.sla_solvers.SLA_solvers_registry import SLASolverRegistry
@@ -9,59 +11,69 @@ from ...base_nonlinear_solver import VariationalSolver1D
 
 
 class VariationalEquationSolver1D(VariationalSolver1D):
-    """Вариационный метод для решения нелинейных уравнений F(x) = 0"""
+    """Решение F(x)=0 через минимизацию функционала J[u]"""
     
-    def _solve_implementation_variational(self, 
-                                        functional: Callable[[float], float],
-                                        interval: Tuple[float, float],
-                                        basis_functions: List[Callable],
-                                        boundary_conditions: dict) -> float:
-        """
-        Решает F(x) = 0 через минимизацию функционала J[x] = ½F(x)²
-        """
+    def _solve_implementation_variational(self, F: Callable, interval: Tuple[float, float], 
+                        basis_funcs: List[Callable]) -> float:
+        """Решает F(x)=0 через минимизацию J = ∫[1/2 F^2 + 1/2λ(u')^2]dx"""
         a, b = interval
-        n = len(basis_functions)
+        n = len(basis_funcs)
+        λ = 1e-3 
+        
+        # Матрица системы: A = M + λ*K
+        # M_ij = ∫ F'(u_approx)·phi_i·phi_j dx
+        # K_ij = ∫ phi_i'·phi_j' dx
         
         A = np.zeros((n, n))
         b_vec = np.zeros(n)
         
         for i in range(n):
             for j in range(n):
-                A[i, j] = self._integrate(
-                    lambda x: basis_functions[i](x) * basis_functions[j](x), a, b
-                )
-        
-        for i in range(n):
-            b_vec[i] = self._integrate(
-                lambda x: functional(x) * basis_functions[i](x), a, b
+                def integrand_M(x):
+                    return NumericalDifferentiator.sixNodeDifferentiate(F, x, 0.1) * basis_funcs[i](x) * basis_funcs[j](x)
+                
+                def integrand_K(x):
+                    phi_i_prime = NumericalDifferentiator.sixNodeDifferentiate(basis_funcs[i], x, 0.1)
+                    phi_j_prime = NumericalDifferentiator.sixNodeDifferentiate(basis_funcs[j], x, 0.1)
+                    return phi_i_prime * phi_j_prime
+                
+                M_ij = self._integrate(integrand_M, a, b)
+                K_ij = self._integrate(integrand_K, a, b)
+                A[i,j] = M_ij + λ * K_ij
+            
+            # Правая часть: ∫ F(0)·phi_i dx
+            b_vec[i] = -self._integrate(
+                lambda x: F(0) * basis_funcs[i](x), a, b
             )
         
-        sbcg_solver = SLASolverRegistry.create_solver("sbcg")
-        coefficients = sbcg_solver.solve(Matrix(A), Vector(b_vec))
+        solver = SLASolverRegistry.create_solver("sbcg")
+        coeffs = solver.solve(Matrix(A), Vector(b_vec))
         
-        def approx_solution(x):
-            return sum(c * phi(x) for c, phi in zip(coefficients, basis_functions))
-
-        return self._find_root(functional, approx_solution, a, b)[0]
-    
-    def _find_root(self, F, approx_func, a, b, n_points=1000):
-        """Находит корень уравнения F(x) = 0"""
-        x_points = np.linspace(a, b, n_points)
+        # u(x) = Σ c_i·phi_i(x)
+        # Корень F(x)=0 примерно точка минимума u(x)
+        # Ищем минимум |u(x)| на [a,b]
+        def u_approx(x):
+            return sum(c * phi(x) for c, phi in zip(coeffs, basis_funcs))
         
-        for i in range(len(x_points) - 1):
-            x1, x2 = x_points[i], x_points[i+1]
-            f1, f2 = F(x1), F(x2)
-            
-            if np.sign(f1) != np.sign(f2):
-                solver = BisectionSolver()
-                root = solver.solve(F, (x1, x2))
-                return root
+        # Ищем где u(x) прмиерно равна 0 (т.е. минимум |u(x)|)
+        x_test = np.linspace(a, b, 1000)
+        u_vals = [abs(u_approx(x)) for x in x_test]
+        root_idx = np.argmin(u_vals)
         
-        min_idx = np.argmin([abs(F(x)) for x in x_points])
-        return x_points[min_idx]
+        # Доточняем методом Ньютона
+        x0 = x_test[root_idx]
+        for _ in range(10):
+            fx = F(x0)
+            fpx = NumericalDifferentiator.sixNodeDifferentiate(F, x0, 0.1)
+            if abs(fpx) < 1e-12:
+                break
+            x0 = x0 - fx / fpx
+        
+        return x0
     
     def _integrate(self, f, a, b, n_points=1000):
         """Численное интегрирование"""
         x = np.linspace(a, b, n_points)
         y = [f(xi) for xi in x]
-        return np.trapezoid(y, x)
+        integrator = IntegratorRegistry.create_solver("trapezoida")
+        return integrator.integrate_table(y, x)
