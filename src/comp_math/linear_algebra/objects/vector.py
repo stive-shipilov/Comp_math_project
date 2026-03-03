@@ -35,6 +35,17 @@ class Vector:
         else:
             return NotImplemented
     
+    def __add__(self, other: 'Vector') -> 'Vector':
+        """Сложение векторов"""
+        if self.dim != other.dim:
+            raise ValueError("Размеры векторов не совпадают: " \
+                             + str(self.dim) + " != " + str(other.dim))
+        
+        result = Vector(np.zeros(self.dim))
+        for i in range(self.dim):
+            result[i] = self[i] + other[i]
+        return result
+    
     def add(self, other: 'Vector') -> 'Vector':
         """Сложение векторов"""
         if self.dim != other.dim:
