@@ -46,6 +46,11 @@ class Vector:
             result[i] = self[i] + other[i]
         return result
     
+    def __sub__(self, other):
+        """Вычитание векторов"""
+        if isinstance(other, Vector):
+            return Vector(self._data - other._data)
+    
     def add(self, other: 'Vector') -> 'Vector':
         """Сложение векторов"""
         if self.dim != other.dim:
