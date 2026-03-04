@@ -16,7 +16,11 @@ class TestAdamsBashforth(unittest.TestCase):
             5: ODERegistry.create_solver("euler"),
             6: ODERegistry.create_solver("kutta"),
             7: ODERegistry.create_solver("heun"),
-            8: ODERegistry.create_solver("rk4")
+            8: ODERegistry.create_solver("rk4"),
+            9: ODERegistry.create_solver("bdf1"),
+            10: ODERegistry.create_solver("bdf2"),
+            11: ODERegistry.create_solver("bdf3"),
+            12: ODERegistry.create_solver("bdf4")
         }
 
     def test_linear_equation(self):
