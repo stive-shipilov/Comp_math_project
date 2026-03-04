@@ -2,7 +2,7 @@ from typing import List, Tuple
 from .base_runge_explicit_ode_solver import BaseRungeExplicitODESolver
 from comp_math.linear_algebra.objects.matrix import Matrix
 from comp_math.linear_algebra.objects.vector import Vector
-from ..base_ode_solver import BaseODESolver
+from ...base_ode_solver import BaseODESolver
 import numpy as np
 
 

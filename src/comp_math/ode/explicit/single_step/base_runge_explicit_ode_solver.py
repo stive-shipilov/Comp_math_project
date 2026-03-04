@@ -39,28 +39,33 @@ class BaseRungeExplicitODESolver:
                 raise ValueError("Сумма b должна быть 1")
 
     def solve(self, f, t_span: Tuple[float, float], y0: List[float], h: float) \
-        -> Tuple[np.ndarray, np.ndarray]:
-
-        tn = t_span[0]
+    -> Tuple[np.ndarray, np.ndarray]:
+    
+        if h <= 0:
+            raise ValueError(f"Шаг должен быть положительным: {h}")
+        
+        t0, t_end = t_span
+        if t0 >= t_end:
+            raise ValueError(f"Начало интервала должно быть меньше конца: {t_span}")
+        
         yn = Vector(y0)
-        len = int((t_span[1] - t_span[0]) / h) + 1
-        t = np.empty(len, dtype=Vector)
-        y = np.empty(len, dtype=Vector)
-        n = 0
-        t[n] = tn
-        y[n] = yn
+        n_steps = int((t_end - t0) / h) + 1
+        
+        t = np.empty(n_steps, dtype=float)
+        y = np.empty(n_steps, dtype=object)
+        
+        t[0] = t0
+        y[0] = yn
         dim = yn.dim
-
-        while tn < t_span[1]:
-            k_list = self.calc_k(f, dim, tn, yn, h)
+        
+        for n in range(n_steps - 1):
+            k_list = self.calc_k(f, dim, t[n], y[n], h)
             bk = Vector(np.zeros(dim))
             for i in range(self.method_dim):
                 bk += self.b[i] * k_list[i]
-            tn += h
-            yn = yn + h * bk
-            n += 1
-            t[n] = tn
-            y[n] = yn
+            
+            t[n + 1] = t[n] + h
+            y[n + 1] = y[n] + h * bk
 
         return t, y
 
