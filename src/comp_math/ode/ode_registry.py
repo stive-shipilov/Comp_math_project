@@ -14,5 +14,5 @@ class ODERegistry(BaseMethodRegistry):
         "kutta": KuttaThirdODESolver,
         "heun": HeunODESolver,
         "rk4": Rk4ODESolver
-    }
+}
     
