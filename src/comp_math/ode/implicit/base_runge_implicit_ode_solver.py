@@ -53,8 +53,6 @@ class BaseRungeImplicitODESolver:
         t[0] = t0
         y[0] = yn
         dim = yn.dim
-
-        print(n_steps)
         
         for n in range(n_steps - 1):
             k_list = self.calc_k(f, dim, t[n], y[n], h)
