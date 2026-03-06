@@ -9,6 +9,7 @@ from .explicit.single_step.euler_ode_solver import EulerODESolver
 from .explicit.single_step.heun_ode_solver import HeunODESolver
 from .explicit.single_step.kutta_third_ode_solver import KuttaThirdODESolver
 from .explicit.single_step.rk4_ode_solver import Rk4ODESolver
+from .implicit.runge_solver_impl import (GaussLegendre2ODESolver, GaussLegendre4ODESolver, RadoIIAODESolver, LobattoIIIAODESolver)
 
 class ODERegistry(BaseMethodRegistry):
     """Фабрика для создания экземпляров решателей ОДУ"""
@@ -26,6 +27,9 @@ class ODERegistry(BaseMethodRegistry):
         "bdf2": BDF2Solver,
         "bdf3": BDF3Solver,
         "bdf4": BDF4Solver,
-
+        "gauss_legendre_2": GaussLegendre2ODESolver,
+        "gauss_legendre_4": GaussLegendre4ODESolver,
+        "rado": RadoIIAODESolver,
+        "lobatto": LobattoIIIAODESolver,
 }
     
