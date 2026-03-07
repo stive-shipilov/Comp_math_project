@@ -2,6 +2,7 @@ from typing import Dict, Type
 
 from comp_math.ode.explicit.multistep.adams_impl import (AdamsBashforth1Solver, AdamsBashforth2Solver, 
 AdamsBashforth3Solver, AdamsBashforth4Solver)
+from comp_math.ode.implicit.rosenbrock_impl import Rosenbrock1Solver, Rosenbrock2Solver, Rosenbrock4Solver
 from comp_math.ode.implicit.gear_solver_impl import Gear1Solver, Gear2Solver, Gear3Solver, Gear4Solver
 # from comp_math.ode.implicit.bdf_solver_impl import (BDF1Solver, BDF2Solver, BDF3Solver, BDF4Solver)
 from ..core.base_method_registry import BaseMethodRegistry
@@ -32,5 +33,8 @@ class ODERegistry(BaseMethodRegistry):
         "gauss_legendre_4": GaussLegendre4ODESolver,
         "rado": RadoIIAODESolver,
         "lobatto": LobattoIIIAODESolver,
+        "rosenbrock1": Rosenbrock1Solver,
+        "rosenbrock2": Rosenbrock2Solver,
+        "rosenbrock4": Rosenbrock4Solver
 }
     
