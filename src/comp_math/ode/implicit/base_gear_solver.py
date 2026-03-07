@@ -25,22 +25,22 @@ class BaseGearSolver(BaseODESolver):
         def G(y_np: np.ndarray) -> np.ndarray:
             y_vec = Vector(y_np.tolist())
             f_val = f(tn + h, y_vec)
-            return (y_vec - y_pred - self.beta * h * f_val).to_numpy()
+            return (y_vec - y_pred - f_val * (self.beta * h)).to_numpy()
         return G
     
     def _compute_prediction(self, y_prev: List[Vector]) -> Vector:
         """Вычисляет предсказание"""
-        dim = y_prev[0].dim
-        y_pred = Vector(np.zeros(dim))
+        y_pred = Vector(np.zeros(y_prev[0].dim))
         for j in range(min(len(y_prev), len(self.alpha))):
-            y_pred = y_pred + self.alpha[j] * y_prev[j]
+            y_pred = y_pred + y_prev[j] * self.alpha[j]
         return y_pred
     
-    def _get_jacobian(self, f: Callable, t: float, y: Vector) -> np.ndarray:
-        """Возвращает якобиан (аналитический или численный)"""
+    def _get_jacobian(self, f: Callable, t: float, y: Vector) -> Matrix:
+        """Возвращает численный якобиан"""
         def f_numpy(y_np: np.ndarray) -> np.ndarray:
             return f(t, Vector(y_np.tolist())).to_numpy()
-        return NumericalJacobian.differentiate(f_numpy, y.to_numpy(), 1e-8)
+        J_np = NumericalJacobian.differentiate(f_numpy, y.to_numpy(), 1e-8)
+        return Matrix(J_np.tolist())
     
     def solve(self, f: Callable, dim: int, t_span: Tuple[float, float], 
               y0: List[float], h: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -61,12 +61,11 @@ class BaseGearSolver(BaseODESolver):
             
             if len(y) <= self.order:
                 # Разгон
-                M = np.eye(dim) - current_h * J
+                M = Matrix(np.eye(dim)).subtract(J * current_h)
                 f_val = f(t_current + current_h, y[-1])
-                rhs = y[-1].to_numpy() + current_h * f_val.to_numpy()
+                rhs = y[-1] + f_val * current_h
                 cg_solver = SLASolverRegistry.create_solver("cg")
-                y_new_np = cg_solver.solve(Matrix(M), Vector(rhs)).to_numpy()
-                y_new = Vector(y_new_np.tolist())
+                y_new = cg_solver.solve(M, rhs)
             else:
                 # Основной метод Гира
                 y_prev = [y[-1 - j] for j in range(min(self.order, len(y)))]
@@ -74,7 +73,7 @@ class BaseGearSolver(BaseODESolver):
                 G = self._create_bdf_function(f, t_current, current_h, y_pred)
                 
                 def J_func(y_np: np.ndarray) -> np.ndarray:
-                    return np.eye(dim) - self.beta * current_h * J
+                    return (Matrix(np.eye(dim)).subtract(J * (self.beta * current_h))).to_numpy()
                 
                 x0 = y_pred.to_numpy()
                 y_new_np = self.newton_solver.solve(F=G, x0=x0, J=J_func)
@@ -85,3 +84,4 @@ class BaseGearSolver(BaseODESolver):
             t_current += current_h
             
         return np.array(t), np.array(y, dtype=object)
+    
