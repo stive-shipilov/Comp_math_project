@@ -81,9 +81,5 @@ class BaseRosenbrockSolver(BaseODESolver):
                 y_new = y_new + self.b[i] * k[i]
             
             y[n+1] = y_new
-            
-            if n % 1000 == 0:
-                y_np = y_new.to_numpy()
-                print(f"Шаг {n}: t={tn:.2e}, y=[{y_np[0]:.6f}, {y_np[1]:.6e}, {y_np[2]:.6f}]")
         
         return t, y
