@@ -11,17 +11,33 @@ class NumericalJacobian(BaseDifferentiator):
         
     @staticmethod
     def differentiate(F: Callable[[NDArray], NDArray],
-                        x: NDArray,
-                        h: float = 1e-5) -> NDArray:
-        """Численное вычисление якобиана"""
+                     x: NDArray,
+                     h: float = 1e-5) -> NDArray:
+        """
+        Численное вычисление якобиана методом центральных разностей
+        """
         n = len(x)
-        J = np.zeros((n, n))
         F0 = F(x)
+        m = len(F0)
+        J = np.zeros((m, n))
         
         for j in range(n):
-            dx = np.zeros(n)
-            dx[j] = h
-            J[:, j] = NumericalDifferentiator.sixNodeDifferentiate(F, x, h)
+            # Создаем возмущенный вектор
+            x_plus = x.copy()
+            x_plus[j] += h
+            F_plus = F(x_plus)
+            
+            x_minus = x.copy()
+            x_minus[j] -= h
+            F_minus = F(x_minus)
+            
+            # Центральная разность
+            J[:, j] = (F_plus - F_minus) / (2 * h)
+            
+            # Проверка на слишком малые значения
+            if np.all(np.abs(J[:, j]) < 1e-12):
+                # Если центральная разность дала ноль, пробуем одностороннюю
+                J[:, j] = (F_plus - F0) / h
         
         return J
     
