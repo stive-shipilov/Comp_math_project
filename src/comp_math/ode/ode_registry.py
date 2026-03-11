@@ -2,7 +2,9 @@ from typing import Dict, Type
 
 from comp_math.ode.explicit.multistep.adams_impl import (AdamsBashforth1Solver, AdamsBashforth2Solver, 
 AdamsBashforth3Solver, AdamsBashforth4Solver)
-from comp_math.ode.implicit.bdf_solver_impl import (BDF1Solver, BDF2Solver, BDF3Solver, BDF4Solver)
+from comp_math.ode.implicit.rosenbrock_impl import Rosenbrock1Solver, Rosenbrock2Solver, Rosenbrock4Solver
+from comp_math.ode.implicit.gear_solver_impl import Gear1Solver, Gear2Solver, Gear3Solver, Gear4Solver
+# from comp_math.ode.implicit.bdf_solver_impl import (BDF1Solver, BDF2Solver, BDF3Solver, BDF4Solver)
 from ..core.base_method_registry import BaseMethodRegistry
 from .base_ode_solver import BaseODESolver
 from .explicit.single_step.euler_ode_solver import EulerODESolver
@@ -23,13 +25,16 @@ class ODERegistry(BaseMethodRegistry):
         "adam2": AdamsBashforth2Solver,
         "adam3": AdamsBashforth3Solver,
         "adam4": AdamsBashforth4Solver,
-        "bdf1": BDF1Solver,
-        "bdf2": BDF2Solver,
-        "bdf3": BDF3Solver,
-        "bdf4": BDF4Solver,
+        "gear1": Gear1Solver,
+        "gear2": Gear2Solver,
+        "gear3": Gear3Solver,
+        "gear4": Gear4Solver,
         "gauss_legendre_2": GaussLegendre2ODESolver,
         "gauss_legendre_4": GaussLegendre4ODESolver,
         "rado": RadoIIAODESolver,
         "lobatto": LobattoIIIAODESolver,
+        "rosenbrock1": Rosenbrock1Solver,
+        "rosenbrock2": Rosenbrock2Solver,
+        "rosenbrock4": Rosenbrock4Solver
 }
     
