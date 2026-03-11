@@ -65,7 +65,7 @@ class BaseRosenbrockSolver(BaseODESolver):
                     sum_gamma_k = sum_gamma_k + k[j] * self.gamma_matrix[i][j]
                 rhs = rhs + (J * sum_gamma_k) * h
                 
-                bcg_solver = SLASolverRegistry.create_solver("bcg")
+                bcg_solver = SLASolverRegistry.create_solver("zeidel")
                 k_i = bcg_solver.solve(M, rhs)
                 k.append(k_i)
             
