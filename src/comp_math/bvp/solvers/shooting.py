@@ -125,7 +125,7 @@ class ShootingSolver(BaseBVPSolver):
             yb = self.get_y_from_vec(y_vec[len(y_vec) - 1])
 
             psi = self.bc(ya, yb)
-
+            
             if (np.max(np.abs(psi)) < tol):
                 y = list(map(lambda yn_vec: self.get_y_from_vec(yn_vec), y_vec))
                 return x, y
@@ -135,11 +135,11 @@ class ShootingSolver(BaseBVPSolver):
 
             ga_jacobi, gb_jacobi = self.get_bc_jacobians(ya, yb, h_jacobi)
 
-            v_1 = ga_jacobi @ va + gb_jacobi @ vb # v' матрица nxn
+            psi_1 = ga_jacobi @ va + gb_jacobi @ vb # psi' матрица nxn
 
             # сигнатура вызываемой фнукции:
             # def solve(self, A: Matrix, b: Vector) -> Vector:
-            da = self.sla_solver.solve(Matrix(v_1), (-1) * Vector(psi))
+            da = self.sla_solver.solve(Matrix(psi_1), (-1) * Vector(psi))
 
             a = a + da
 
